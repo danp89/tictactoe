@@ -1,0 +1,429 @@
+<div class="tic-tac-container">
+    <h1>❌ Tic‑Tac‑Toe ⭕</h1>
+    <div class="subtitle">Communicate · 1:1 Class Tool</div>
+    <div class="tic-tac-board" id="ticTacBoard"></div>
+    <div class="tic-tac-status" id="ticTacStatus">🎯 Pick a square</div>
+    <div class="tic-tac-controls">
+        <button class="tic-tac-btn tic-tac-btn-primary" id="ticTacReset">⟳ New Game</button>
+        <button class="tic-tac-btn tic-tac-btn-secondary" id="ticTacClear">🧹 Clear Board</button>
+    </div>
+    <div class="tic-tac-footer">Each square has a number · Perfect for 1:1 classes</div>
+</div>
+
+<div class="tic-tac-picker" id="ticTacPicker">
+    <div class="tic-tac-picker-box">
+        <h3>✏️ Mark square</h3>
+        <p id="ticTacPickerInfo">Square #<strong>1</strong></p>
+        <div class="tic-tac-picker-options">
+            <button class="tic-tac-picker-btn x" data-symbol="X">X</button>
+            <button class="tic-tac-picker-btn o" data-symbol="O">O</button>
+        </div>
+        <button class="tic-tac-picker-btn cancel" id="ticTacPickerCancel">Cancel</button>
+    </div>
+</div>
+
+<style>
+/* ===== ESTILOS ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.tic-tac-container {
+    font-family: 'Montserrat', 'Futura', sans-serif;
+    background: white;
+    padding: 2rem 1.5rem;
+    border-radius: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 550px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+.tic-tac-container h1 {
+    color: #203B6A;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.25rem;
+}
+.tic-tac-container .subtitle {
+    color: #666;
+    font-size: 0.95rem;
+    border-bottom: 3px solid #E3A72F;
+    display: inline-block;
+    padding-bottom: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+.tic-tac-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 400px;
+    margin: 0 auto 1.5rem;
+}
+.tic-tac-cell {
+    background: #f0f4fa;
+    aspect-ratio: 1 / 1;
+    border: 3px solid #d0d9e6;
+    border-radius: 1rem;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #203B6A;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
+    line-height: 1;
+}
+.tic-tac-cell .number {
+    font-size: 1.1rem;
+    color: #a0b3cc;
+    font-weight: 600;
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    opacity: 0.7;
+    pointer-events: none;
+    user-select: none;
+}
+.tic-tac-cell .symbol {
+    font-size: 3.6rem;
+    font-weight: 700;
+    pointer-events: none;
+    user-select: none;
+    margin-top: 4px;
+}
+.tic-tac-cell:hover {
+    background: #e3eaf3;
+    border-color: #203B6A;
+}
+.tic-tac-cell.taken {
+    cursor: default;
+    opacity: 0.9;
+}
+.tic-tac-cell.taken:hover {
+    background: #f0f4fa;
+    border-color: #d0d9e6;
+    transform: none;
+}
+.tic-tac-cell.winner-cell {
+    background: #E3A72F;
+    border-color: #E3A72F;
+}
+.tic-tac-cell.winner-cell .symbol {
+    color: white;
+}
+.tic-tac-cell.winner-cell .number {
+    color: rgba(255,255,255,0.6);
+}
+.tic-tac-status {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #203B6A;
+    min-height: 3rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: #f8faff;
+    border-radius: 1rem;
+}
+.tic-tac-status span {
+    background: #203B6A;
+    color: white;
+    padding: 0.2rem 1rem;
+    border-radius: 2rem;
+    display: inline-block;
+}
+.tic-tac-status .win-x { background: #203B6A; }
+.tic-tac-status .win-o { background: #E3A72F; color: #203B6A; }
+.tic-tac-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+.tic-tac-btn {
+    background: white;
+    border: 2px solid #203B6A;
+    color: #203B6A;
+    padding: 0.7rem 1.8rem;
+    border-radius: 3rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.tic-tac-btn:hover {
+    background: #203B6A;
+    color: white;
+}
+.tic-tac-btn-primary {
+    background: #203B6A;
+    color: white;
+    border-color: #203B6A;
+}
+.tic-tac-btn-primary:hover {
+    background: #152d50;
+    border-color: #152d50;
+}
+.tic-tac-btn-secondary {
+    border-color: #E3A72F;
+    color: #E3A72F;
+}
+.tic-tac-btn-secondary:hover {
+    background: #E3A72F;
+    color: white;
+}
+.tic-tac-footer {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: #bbb;
+}
+.tic-tac-picker {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.tic-tac-picker.active {
+    display: flex;
+}
+.tic-tac-picker-box {
+    background: white;
+    padding: 2rem 2.5rem;
+    border-radius: 2rem;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+.tic-tac-picker-box h3 {
+    color: #203B6A;
+    margin-bottom: 0.5rem;
+}
+.tic-tac-picker-box p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+.tic-tac-picker-options {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+.tic-tac-picker-btn {
+    font-size: 3rem;
+    font-weight: 700;
+    padding: 0.5rem 1.8rem;
+    border: 3px solid #d0d9e6;
+    border-radius: 1.5rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100px;
+}
+.tic-tac-picker-btn:hover {
+    border-color: #203B6A;
+    transform: scale(1.05);
+}
+.tic-tac-picker-btn.x { color: #203B6A; }
+.tic-tac-picker-btn.o { color: #E3A72F; }
+.tic-tac-picker-btn.cancel {
+    font-size: 1rem;
+    border-color: #ccc;
+    color: #999;
+    width: auto;
+    padding: 0.5rem 1.5rem;
+    margin-top: 1rem;
+}
+.tic-tac-picker-btn.cancel:hover {
+    border-color: #999;
+    background: #f5f5f5;
+}
+@media (max-width: 480px) {
+    .tic-tac-container { padding: 1.5rem 1rem; }
+    .tic-tac-board { gap: 8px; max-width: 320px; }
+    .tic-tac-cell .symbol { font-size: 2.8rem; }
+    .tic-tac-cell .number { font-size: 0.9rem; top: 4px; right: 7px; }
+    .tic-tac-picker-btn { font-size: 2.5rem; width: 80px; }
+    .tic-tac-container h1 { font-size: 1.6rem; }
+}
+</style>
+
+<script>
+(function() {
+    let board = Array(9).fill(null);
+    let gameOver = false;
+    let pendingIndex = null;
+
+    const boardEl = document.getElementById('ticTacBoard');
+    const statusEl = document.getElementById('ticTacStatus');
+    const resetBtn = document.getElementById('ticTacReset');
+    const clearBtn = document.getElementById('ticTacClear');
+    const picker = document.getElementById('ticTacPicker');
+    const pickerInfo = document.getElementById('ticTacPickerInfo');
+    const pickerCancel = document.getElementById('ticTacPickerCancel');
+
+    function renderBoard() {
+        boardEl.innerHTML = '';
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'tic-tac-cell';
+            if (board[i]) cell.classList.add('taken');
+
+            const numSpan = document.createElement('span');
+            numSpan.className = 'number';
+            numSpan.textContent = i + 1;
+            cell.appendChild(numSpan);
+
+            if (board[i]) {
+                const symSpan = document.createElement('span');
+                symSpan.className = 'symbol';
+                symSpan.textContent = board[i];
+                cell.appendChild(symSpan);
+            }
+
+            cell.dataset.index = i;
+            cell.addEventListener('click', () => openPicker(i));
+            boardEl.appendChild(cell);
+        }
+        updateStatus();
+    }
+
+    function updateStatus() {
+        const winner = checkWinner();
+        if (winner) {
+            const cls = winner === 'X' ? 'win-x' : 'win-o';
+            statusEl.innerHTML = '🏆 <span class="' + cls + '">' + winner + '</span> wins! 🎉';
+            highlightWinner(winner);
+            gameOver = true;
+            return;
+        }
+        if (board.every(function(c) { return c !== null; })) {
+            statusEl.innerHTML = '🤝 It\'s a tie! Well played.';
+            gameOver = true;
+            return;
+        }
+        gameOver = false;
+        statusEl.innerHTML = '🎯 Pick a square';
+    }
+
+    function checkWinner() {
+        var lines = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+        for (var i = 0; i < lines.length; i++) {
+            var a = lines[i][0], b = lines[i][1], c = lines[i][2];
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                return board[a];
+            }
+        }
+        return null;
+    }
+
+    function highlightWinner(winner) {
+        var lines = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+        var cells = document.querySelectorAll('.tic-tac-cell');
+        for (var i = 0; i < lines.length; i++) {
+            var a = lines[i][0], b = lines[i][1], c = lines[i][2];
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                cells[a].classList.add('winner-cell');
+                cells[b].classList.add('winner-cell');
+                cells[c].classList.add('winner-cell');
+                break;
+            }
+        }
+    }
+
+    function openPicker(index) {
+        if (gameOver) {
+            statusEl.innerHTML = '⚠️ Game is over. Start a new game.';
+            return;
+        }
+        if (board[index] !== null) {
+            statusEl.innerHTML = '⛔ Square ' + (index+1) + ' is already taken.';
+            return;
+        }
+        pendingIndex = index;
+        pickerInfo.innerHTML = 'Square #<strong>' + (index+1) + '</strong>';
+        picker.classList.add('active');
+    }
+
+    function closePicker() {
+        picker.classList.remove('active');
+        pendingIndex = null;
+    }
+
+    function markCell(symbol) {
+        if (pendingIndex === null) return;
+        if (gameOver) { closePicker(); return; }
+        if (board[pendingIndex] !== null) {
+            closePicker();
+            statusEl.innerHTML = '⛔ Square already taken.';
+            return;
+        }
+        board[pendingIndex] = symbol;
+        closePicker();
+        renderBoard();
+
+        var winner = checkWinner();
+        if (winner || board.every(function(c) { return c !== null; })) {
+            gameOver = true;
+            updateStatus();
+            return;
+        }
+        statusEl.innerHTML = '✅ Square marked. Next turn.';
+    }
+
+    function resetGame() {
+        board = Array(9).fill(null);
+        gameOver = false;
+        closePicker();
+        renderBoard();
+        statusEl.innerHTML = '🔄 New game. Pick a square.';
+    }
+
+    function clearBoard() {
+        board = Array(9).fill(null);
+        gameOver = false;
+        closePicker();
+        renderBoard();
+        statusEl.innerHTML = '🧹 Board cleared. Start fresh.';
+    }
+
+    resetBtn.addEventListener('click', resetGame);
+    clearBtn.addEventListener('click', clearBoard);
+    pickerCancel.addEventListener('click', closePicker);
+
+    document.querySelectorAll('.tic-tac-picker-btn[data-symbol]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            markCell(e.currentTarget.dataset.symbol);
+        });
+    });
+
+    picker.addEventListener('click', function(e) {
+        if (e.target === picker) closePicker();
+    });
+
+    renderBoard();
+})();
+</script>
